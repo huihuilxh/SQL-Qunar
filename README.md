@@ -51,3 +51,9 @@ select * from mobile_user_new2 where uid='47B360D0-0424-49C0-AE12-77CC94902C8F'
 
 使用时修改uid和时间
 select * from travel_client_access where dt='2017-09-12' and uid='47B360D0-0424-49C0-AE12-77CC94902C8F' and requesturi='/api/city/locate' order by currenttime asc
+
+7.查询搜索词为当前城市名的搜索词和用户UID（例如用户在北京酒店列表页搜搜“北京”的情况）
+
+select uid,query,cityid from 
+(select uid,regexp_extract(requestparammap,'query=([^, }]+)',1) as query,regexp_extract(requestparammap,'cityId=([0-9]+)',1) as cityid from travel_client_access where dt='2017-11-01' and requesturi='/api/hotel/search') as a,
+(select distinct dist_id,dist_name from poi_detail) as b where a.cityid=b.dist_id and a.query=b.dist_name
